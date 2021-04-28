@@ -139,21 +139,15 @@ Widget _crearBoton( LoginBloc bloc){
           elevation: 0.0,
           color: Colors.deepOrange,
           textColor: Colors.white,
-          onPressed: snapshot.hasData ? ()=> _login(bloc, context) : null
+          onPressed: snapshot.hasData ? ()=> _ScreenMap(context) : null
       );
     },
-  ); 
+  );
 }
 
-  _login( LoginBloc bloc, BuildContext context) {
+  _ScreenMap(BuildContext context) {
 
-    print(' ============');
-    print('Email: ${ bloc.email }' );
-    print('Password ${ bloc.password }');
-    print(' ============');
-
-
-    Navigator.pushReplacementNamed(context, 'home');
+    Navigator.pushReplacementNamed(context, 'map');
   }
 
 

@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.formulariomic">
-   <application
+   <application 
         android:label="formulariomic"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.mapbox.token" android:value="pk.eyJ1IjoicmtndXptYW4iLCJhIjoiY2tvMWw0cGNyMG10ODJucnQ3eGUybjE1bSJ9.Enep2UHty3TdsDtDp7rNUg"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
