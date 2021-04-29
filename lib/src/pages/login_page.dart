@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:formulariomic/src/bloc/provider.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatelessWidget {
   @override
@@ -114,14 +117,38 @@ Widget _crearBoton(LoginBloc bloc) {
           elevation: 0.0,
           color: Colors.deepOrange,
           textColor: Colors.white,
-          onPressed: snapshot.hasData ? () => _ScreenMap(context) : null);
+          onPressed: snapshot.hasData ? () => _login(bloc, context) : null);
     },
   );
 }
 
-_ScreenMap(BuildContext context) {
+Future _login(LoginBloc bloc, BuildContext context) async {
+  final String url = "http://192.168.0.182:8080/login";
+  Map datos = {
+    'correo': bloc.email,
+    'password': bloc.password,
+  };
+
+  //peticion a la API
+  var response = await http.post(url,
+      headers: {"Content-Type": "application/json"}, body: json.encode(datos));
+
+  //respuesta es vacia
+  if (response.body.isEmpty) {
+    /*setState(() {
+        mensajeCredenciales = "Las credenciales son incorrectas.";
+      });*/
+    print("Las credenciales son incorrectas.");
+    return;
+  }
+
+  //se encontro alusuario y datos correctos pasa a la siguiente pagina.
   Navigator.pushReplacementNamed(context, 'home');
 }
+
+/*_ScreenMap(BuildContext context) {
+  Navigator.pushReplacementNamed(context, 'home');
+}*/
 
 Widget _crearFondo(BuildContext context) {
   final size = MediaQuery.of(context).size;
