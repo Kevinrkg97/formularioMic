@@ -12,6 +12,8 @@ class Usuario {
 
   Usuario.vacio();
 
+  Usuario.login({this.correo, this.password});
+
   Usuario.fromJson(Map<String, dynamic> json)
       : idUsuario = json['id'],
         nombre = json['nombre'],
@@ -20,12 +22,16 @@ class Usuario {
         correo = json['correo'],
         cargo = json['cargo'],
         password = json['password'];
-/*
+
   Map<String, dynamic> toJson() =>
       {
-        'id': idUsuario,
-        'username': username,
+        'idUsuario': idUsuario,
+        'nombre': nombre,
+        'apellidoPaterno': apellidoPaterno,
+        'apellidoMaterno': apellidoMaterno,
+        'correo': correo,
+        'cargo': cargo,
         'password': password,
       };
-*/
+
 }
