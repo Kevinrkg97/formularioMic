@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:formulariomic/src/bloc/provider.dart';
+import 'package:formulariomic/src/modelo/Usuario.dart';
 import 'package:formulariomic/src/pages/camera_on.dart';
 import 'package:formulariomic/src/pages/users_location.dart';
 
@@ -32,18 +33,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
 
+    Usuario user = Usuario.fromJson(ModalRoute.of(context).settings.arguments);
+
     return Scaffold(
-      appBar: AppBar(title: Text('Bienvenido ${bloc.email}')),
+      appBar: AppBar(title: Text('Bienvenido ${user.nombre}')),
       drawer: Drawer(
         child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text('Aqui se colocara el nombre del usuario'),
-              accountEmail: Text('Usuario: ${bloc.email}'),
+              accountName: Text(
+                  '${user.nombre}  ${user.apellidoPaterno}  ${user.cargo}'),
+              accountEmail: Text('Usuario: ${user.correo}'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.deepOrangeAccent,
                 child: Text(
-                  'E',
+                  '${user.nombre.substring(0, 1)}',
                   style: TextStyle(fontSize: 40.0),
                 ),
               ),
