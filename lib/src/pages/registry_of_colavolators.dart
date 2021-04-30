@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:formulariomic/src/modelo/Usuario.dart';
+import 'package:http/http.dart' as http;
 
 class Registry_of_colavorator extends StatefulWidget {
   @override
@@ -7,11 +12,18 @@ class Registry_of_colavorator extends StatefulWidget {
 }
 
 class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
+
+  final formKey = GlobalKey<FormState>();
+  Usuario empleado = Usuario.vacio();
+  String mensajeValidacion = "";
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Form(
+          key: formKey,
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -28,6 +40,7 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
               _puest_usuario(),
               _corr_usuario(),
               _pass_usuario(),
+              Text(mensajeValidacion),
               _boton_registro(),
             ],
           ),
@@ -51,7 +64,9 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _nom_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) => validar(value),
+        onSaved: (value){empleado.nombre = value;},
         decoration: InputDecoration(
           labelText: "Nombre",
           icon: Icon(Icons.account_circle),
@@ -65,7 +80,9 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _ap_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) => validar(value),
+        onSaved: (value){empleado.apellidoPaterno = value;},
         decoration: InputDecoration(
           labelText: "Primer apellido",
           icon: Icon(Icons.account_circle),
@@ -79,7 +96,8 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _am_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        onSaved: (value){empleado.apellidoMaterno = value;},
         decoration: InputDecoration(
           labelText: "Segundo apellido",
           icon: Icon(Icons.account_circle),
@@ -93,7 +111,8 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _num_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        onSaved: (value){empleado.telefono = value;},
         decoration: InputDecoration(
           labelText: "Numero telefonico",
           icon: Icon(Icons.phone),
@@ -107,7 +126,9 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _puest_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        onSaved: (value){empleado.cargo = value;},
+        validator: (value) => validar(value),
         decoration: InputDecoration(
           labelText: "Puesto",
           icon: Icon(Icons.verified_user),
@@ -121,7 +142,9 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _corr_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        onSaved: (value){empleado.correo = value;},
+        validator: (value) => validar(value),
         decoration: InputDecoration(
           labelText: "Correo electronico",
           icon: Icon(Icons.alternate_email),
@@ -135,7 +158,9 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
   Widget _pass_usuario() {
     return Container(
       padding: EdgeInsets.all(15),
-      child: TextField(
+      child: TextFormField(
+        validator: (value) => validar(value),
+        onSaved: (value){empleado.password = value;},
         obscureText: true,
         decoration: InputDecoration(
           labelText: "Contraseña",
@@ -161,8 +186,75 @@ class _Registry_of_colavoratorState extends State<Registry_of_colavorator> {
           ),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        onPressed: () {},
+        onPressed: () {
+          registrar();
+        },
       ),
     );
   }
+
+
+  Future registrar() async{
+    if(formKey.currentState.validate()){
+      formKey.currentState.save();
+
+
+      final String url = "http://192.168.10.101:8080/empelado/create";
+      int status;
+      Map<String, dynamic> datos;
+
+
+      try{
+        var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: json.encode(empleado.toJson()) ).timeout(const Duration(seconds: 20));
+        status = response.statusCode;
+        datos = json.decode(response.body);
+
+        if(status == 201){
+          //Navigator.pushReplacementNamed(context, "/codigoVerificacion", arguments: Usuario.fromJson(datos));
+          setState(() {
+            mensajeValidacion = datos['success'];
+          });
+          return;
+        }
+
+        String mensaje;
+        if(status == 404) mensaje = datos['mensajeAplication'];
+
+        if(status == 500) mensaje = datos['mensajeAplication'];
+
+        setState(() {
+          mensajeValidacion = mensaje;
+          loading = false;
+        });
+
+      }on SocketException{
+        setState(() {
+          mensajeValidacion = "Error de conexión.";
+          loading = false;
+        });
+      }
+
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+}
+
+
+
+
+
+String validar(String value){
+  if(value.isEmpty){
+    return "*Campo requerido.";
+  }
+  return null;
 }

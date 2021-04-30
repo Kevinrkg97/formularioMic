@@ -33,9 +33,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of(context);
 
-    Usuario user = Usuario.fromJson(ModalRoute.of(context).settings.arguments);
+    final bloc = Provider.of(context);
+    Usuario user = ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
       appBar: AppBar(title: Text('Bienvenido ${user.nombre}')),
@@ -44,12 +44,12 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text(
-                  '${user.nombre}  ${user.apellidoPaterno}  ${user.cargo}'),
+                  '${user.nombre.toUpperCase()} ${user.apellidoPaterno.toUpperCase()}'),
               accountEmail: Text('Usuario: ${user.correo}'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.deepOrangeAccent,
                 child: Text(
-                  '${user.nombre.substring(0, 1)}',
+                  '${user.nombre.substring(0,1).toUpperCase()}',
                   style: TextStyle(fontSize: 40.0),
                 ),
               ),

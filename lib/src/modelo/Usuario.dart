@@ -1,36 +1,39 @@
 class Usuario {
-  int idUsuario;
+  int idAdmin;
   String nombre;
   String apellidoPaterno;
   String apellidoMaterno;
+  String telefono;
+  String cargo;
   String correo;
   String password;
-  String cargo;
 
-  Usuario(this.idUsuario, this.nombre, this.apellidoPaterno,
-      this.apellidoMaterno, this.correo, this.cargo, this.password);
+  Usuario({this.idAdmin, this.nombre, this.apellidoPaterno, this.apellidoMaterno, this.telefono, this.cargo, this.correo, this.password});
 
   Usuario.vacio();
 
   Usuario.login({this.correo, this.password});
 
   Usuario.fromJson(Map<String, dynamic> json)
-      : idUsuario = json['id'],
+      : idAdmin = json['idAdmin'],
         nombre = json['nombre'],
         apellidoPaterno = json['apellidoPaterno'],
         apellidoMaterno = json['apellidoMaterno'],
-        correo = json['correo'],
+        telefono = json['telefono'],
         cargo = json['cargo'],
+        correo = json['correo'],
         password = json['password'];
+
 
   Map<String, dynamic> toJson() =>
       {
-        'idUsuario': idUsuario,
+        'idAdmin': idAdmin,
         'nombre': nombre,
         'apellidoPaterno': apellidoPaterno,
         'apellidoMaterno': apellidoMaterno,
-        'correo': correo,
+        'telefono': telefono,
         'cargo': cargo,
+        'correo': correo,
         'password': password,
       };
 

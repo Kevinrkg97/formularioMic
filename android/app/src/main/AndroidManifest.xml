@@ -1,6 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.formulariomic">
-   <application 
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+   <application
+       android:usesCleartextTraffic="true"
         android:label="formulariomic"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.mapbox.token" android:value="pk.eyJ1IjoicmtndXptYW4iLCJhIjoiY2tvMWw0cGNyMG10ODJucnQ3eGUybjE1bSJ9.Enep2UHty3TdsDtDp7rNUg"/>
