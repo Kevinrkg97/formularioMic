@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:formulariomic/src/bloc/provider.dart';
 import 'package:formulariomic/src/modelo/Usuario.dart';
 import 'package:formulariomic/src/pages/camera_on.dart';
-import 'package:formulariomic/src/pages/users_location.dart';
+import 'package:formulariomic/src/pages/registry_of_colavolators.dart';
 
 import 'fullscreenmap.dart';
 
@@ -19,6 +19,8 @@ class _HomePageState extends State<HomePage> {
         return FullScreenMap();
       case 1:
         return Camera_on();
+      case 2:
+        return Registry_of_colavorator();
     }
   }
 
@@ -67,7 +69,15 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 _onSelectItem(1);
               },
-            )
+            ),
+            ListTile(
+              title: Text('Reguistrar nuevo usuario'),
+              leading: Icon(Icons.account_circle),
+              selected: (2 == _selectDrawerItem),
+              onTap: () {
+                _onSelectItem(2);
+              },
+            ),
           ],
         ),
       ),
