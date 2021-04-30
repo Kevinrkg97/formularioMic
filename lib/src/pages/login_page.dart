@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:formulariomic/src/bloc/provider.dart';
+import 'package:formulariomic/src/modelo/Usuario.dart';
 import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
@@ -57,9 +59,9 @@ class _LoginPageState extends State<LoginPage> {
               children: <Widget>[
                 Text('Inicio de sesión', style: TextStyle(fontSize: 20.0)),
                 //mensajeCredenciales
-                SizedBox(height: 10.0),
-                Text(mensajeCredenciales),
-                SizedBox(height: 60.0),
+                SizedBox(height: 40.0),
+                Text(mensajeCredenciales, style: TextStyle(color: Colors.redAccent),),
+                SizedBox(height: 15.0),
                 _crearEmail(bloc),
                 SizedBox(height: 30.0),
                 _crearPassword(bloc),
@@ -76,37 +78,44 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _login(LoginBloc bloc, BuildContext context) async {
-    final String url = "http://192.168.0.182:8080/login";
-    Map datos = {
-      'correo': bloc.email,
-      'password': bloc.password,
-    };
+    final String url = "http://192.168.10.101:8080/login";
+    String exception = null;
 
-    //peticion a la API
-    var response = await http.post(url,
-        headers: {"Content-Type": "application/json"},
-        body: json.encode(datos));
+    Usuario user = Usuario.login(correo: bloc.email, password: bloc.password);
+    try {
+      var response = await http.post(url, headers: {"Content-Type": "application/json"},body: json.encode(user.toJson())).timeout(const Duration(seconds: 20));
 
-    //respuesta es vacia
-    if (response.body.isEmpty) {
-      setState(() {
-        mensajeCredenciales = "Las credenciales son incorrectas.";
-      });
-      print("Las credenciales son incorrectas.");
-      return;
+      print("este es el mensaje:  ${response.request}");
+
+      if (response.body.isEmpty) {
+          setState(() {
+            mensajeCredenciales = "Las credenciales son incorrectas.";
+          });
+          return;
+      }
+
+      //se encontro alusuario y datos correctos pasa a la siguiente pagina.
+      Navigator.pushReplacementNamed(context, 'home', /*arguments: json.decode(response.body)*/);
+
+    }on SocketException {
+      exception = "Falló la conexión.";
     }
 
-    //se encontro alusuario y datos correctos pasa a la siguiente pagina.
-    Navigator.pushReplacementNamed(context, 'home',
-        arguments: json.decode(response.body));
+    setState(() {
+      mensajeCredenciales = exception;
+    });
+
   }
+
+
+
 
   Widget _crearBoton(LoginBloc bloc) {
     // formValidStream
     return StreamBuilder(
       stream: bloc.formValidStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return RaisedButton(
+        return MaterialButton(
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
               child: Text('Ingresar'),
@@ -162,9 +171,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-/*_ScreenMap(BuildContext context) {
-  Navigator.pushReplacementNamed(context, 'home');
-}*/
+
 
   Widget _crearFondo(BuildContext context) {
     final size = MediaQuery.of(context).size;
