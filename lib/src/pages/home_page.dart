@@ -5,6 +5,7 @@ import 'package:formulariomic/src/pages/camera_on.dart';
 import 'package:formulariomic/src/pages/registry_of_colavolators.dart';
 
 import 'fullscreenmap.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -21,6 +22,8 @@ class _HomePageState extends State<HomePage> {
         return Camera_on();
       case 2:
         return Registry_of_colavorator();
+      case 3:
+        return LoginPage();
     }
   }
 
@@ -33,7 +36,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     final bloc = Provider.of(context);
     Usuario user = ModalRoute.of(context).settings.arguments;
 
@@ -49,7 +51,7 @@ class _HomePageState extends State<HomePage> {
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.deepOrangeAccent,
                 child: Text(
-                  '${user.nombre.substring(0,1).toUpperCase()}',
+                  '${user.nombre.substring(0, 1).toUpperCase()}',
                   style: TextStyle(fontSize: 40.0),
                 ),
               ),
@@ -76,6 +78,14 @@ class _HomePageState extends State<HomePage> {
               selected: (2 == _selectDrawerItem),
               onTap: () {
                 _onSelectItem(2);
+              },
+            ),
+            ListTile(
+              title: Text('Cerrar Cesión'),
+              leading: Icon(Icons.account_circle_outlined),
+              selected: (2 == _selectDrawerItem),
+              onTap: () {
+                _onSelectItem(3);
               },
             ),
           ],

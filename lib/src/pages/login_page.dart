@@ -61,20 +61,27 @@ class _LoginPageState extends State<LoginPage> {
                 Text('Inicio de sesión', style: TextStyle(fontSize: 20.0)),
                 //mensajeCredenciales
                 SizedBox(height: 20.0),
-                if(loading)
+                if (loading)
                   Container(
                     height: 20,
                     width: 50,
                     margin: const EdgeInsets.only(left: 10),
                     child: CircularProgressIndicator(),
                   ),
-                Text(mensajeCredenciales, style: TextStyle(color: Colors.redAccent),),
+                Text(
+                  mensajeCredenciales,
+                  style: TextStyle(color: Colors.redAccent),
+                ),
                 SizedBox(height: 15.0),
                 _crearEmail(bloc),
                 SizedBox(height: 30.0),
                 _crearPassword(bloc),
                 SizedBox(height: 30.0),
                 _crearBoton(bloc),
+                SizedBox(height: 2.0),
+                _boton_registro(),
+                SizedBox(height: 2.0),
+                _credenciales(),
               ],
             ),
           ),
@@ -86,42 +93,58 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future _login(LoginBloc bloc, BuildContext context) async {
-
     setState(() {
       loading = true;
       mensajeCredenciales = "";
     });
     Usuario user = Usuario.login(correo: bloc.email, password: bloc.password);
-    final String url = "http://192.168.10.101:8080/login";
+    final String url = "http://192.168.0.182:8080/login";
     Map<String, dynamic> datos;
     int status;
 
-    try{
-      var response = await http.post(url, headers: {"Content-Type": "application/json"}, body: json.encode(user.toJson()) ).timeout(const Duration(seconds: 20));
+    try {
+      var response = await http
+          .post(url,
+              headers: {"Content-Type": "application/json"},
+              body: json.encode(user.toJson()))
+          .timeout(const Duration(seconds: 20));
       status = response.statusCode;
       datos = json.decode(response.body);
 
-      if(status == 200){
-        Navigator.pushReplacementNamed(context, "home", arguments: Usuario.fromJson(datos));
+      if (status == 200) {
+        Navigator.pushReplacementNamed(context, "home",
+            arguments: Usuario.fromJson(datos));
         return;
       }
 
       String mensaje;
-      if(status == 404) mensaje = datos['mensaje'];
+      if (status == 404) mensaje = datos['mensaje'];
 
-      if(status == 500) mensaje = datos['mensajeAplication'] + " Status: $status";
+      if (status == 500)
+        mensaje = datos['mensajeAplication'] + " Status: $status";
 
       setState(() {
         loading = false;
         mensajeCredenciales = mensaje;
       });
-
-    }on Exception{
+    } on Exception {
       setState(() {
         loading = false;
         mensajeCredenciales = "Error de conexión.";
       });
     }
+  }
+
+  Widget _credenciales() {
+    return Center(
+      child: Text(
+        'Olvide mi contraseña.',
+        style: TextStyle(
+          fontSize: 15.0,
+          color: Colors.black,
+        ),
+      ),
+    );
   }
 
   Widget _crearBoton(LoginBloc bloc) {
@@ -131,10 +154,9 @@ class _LoginPageState extends State<LoginPage> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return MaterialButton(
             child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-                  child:
-                      Text('Ingresar'),
-                ),
+              padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+              child: Text('Ingresar'),
+            ),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0)),
             elevation: 0.0,
@@ -186,7 +208,25 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
+  Widget _boton_registro() {
+    return Container(
+      padding: EdgeInsets.all(25),
+      alignment: Alignment.center,
+      child: MaterialButton(
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 70),
+        color: Colors.deepOrange,
+        textColor: Colors.white,
+        child: Text(
+          'Registrate',
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+        elevation: 0.0,
+        onPressed: () {
+          Navigator.pushNamed(context, "reg_admin");
+        },
+      ),
+    );
+  }
 
   Widget _crearFondo(BuildContext context) {
     final size = MediaQuery.of(context).size;
